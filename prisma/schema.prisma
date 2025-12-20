@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 enum UserRole {
   user
   admin
@@ -48,7 +47,6 @@ enum Quality {
   RES_1080P @map("1080p")
   RES_4K    @map("4k")
 }
-
 
 model User {
   id           String   @id @default(uuid()) @db.Uuid

@@ -1,0 +1,59 @@
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpCode,
+  HttpStatus,
+  UseGuards
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
+import * as express from "express";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthGuard } from "../../guards/auth.guard";
+import { VerifyOtpDto } from "./dto/verify-otp.dto";
+
+@ApiTags("Autentifikatsiya")
+@Controller("auth")
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post("register")
+  @ApiOperation({ summary: "Ro‘yxatdan o‘tish (OTP yuborish)" })
+  register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
+  }
+
+  @Post("verify-otp")
+  @ApiOperation({ summary: "OTP kodni tasdiqlash" })
+  verifyOtp(@Body() dto: VerifyOtpDto) {
+    // dto ishlatildi
+    return this.authService.verifyOtp(dto.email, dto.otp);
+  }
+
+  @Post("login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Tizimga kirish" })
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: express.Response
+  ) {
+    const result = await this.authService.login(dto);
+    res.cookie("auth_token", result.token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
+    });
+    return result.response;
+  }
+
+  @Post("logout")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res({ passthrough: true }) res: express.Response) {
+    res.clearCookie("auth_token");
+    return { success: true, message: "Muvaffaqiyatli tizimdan chiqildi" };
+  }
+}
