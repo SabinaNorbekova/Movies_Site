@@ -1,3 +1,4 @@
+//auth/verify-otp
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNumber } from "class-validator";
 

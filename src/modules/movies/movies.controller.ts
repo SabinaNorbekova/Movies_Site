@@ -1,3 +1,4 @@
+//movies.controller
 import {
   Controller,
   Post,
@@ -14,7 +15,7 @@ import { UserRoles } from "../../decorators/role.decorator";
 import { Roles } from "../../decorators/role.enum";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 
-@ApiTags("Kinolar")
+@ApiTags("Movies")
 @Controller("movies")
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
@@ -23,19 +24,19 @@ export class MoviesController {
   @ApiBearerAuth()
   @UserRoles(Roles.ADMIN, Roles.SUPERADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  @ApiOperation({ summary: "Kino qo'shish (Faqat Admin)" })
+  @ApiOperation({ summary: "Add a movie (Only admin)" })
   create(@Req() req: any, @Body() body: any) {
     return this.moviesService.create(req.user.sub, body);
   }
 
   @Get()
-  @ApiOperation({ summary: "Barcha kinolar ro'yxati" })
+  @ApiOperation({ summary: "All Movies list" })
   findAll() {
     return this.moviesService.findAll();
   }
 
   @Get(":slug")
-  @ApiOperation({ summary: "Kino haqida batafsil ma'lumot" })
+  @ApiOperation({ summary: "All informations about movie" })
   findOne(@Param("slug") slug: string) {
     return this.moviesService.findBySlug(slug);
   }
