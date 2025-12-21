@@ -7,7 +7,7 @@ const prisma = new PrismaService();
 async function main() {
   console.log("Start testing...");
 
-  const password = await bcrypt.hash("12345", 10);
+  const password = await bcrypt.hash("qwer12345", 10);
 
   const superadmin = await prisma.user.upsert({
     where: { email: "sabinanorbekova1211@gmail.com" },

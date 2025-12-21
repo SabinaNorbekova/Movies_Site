@@ -1,3 +1,4 @@
+//auth.controller
 import {
   Controller,
   Post,
@@ -15,27 +16,26 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "../../guards/auth.guard";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
 
-@ApiTags("Autentifikatsiya")
+@ApiTags("Authentification")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("register")
-  @ApiOperation({ summary: "Ro‘yxatdan o‘tish (OTP yuborish)" })
+  @ApiOperation({ summary: "Registration" })
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
   @Post("verify-otp")
-  @ApiOperation({ summary: "OTP kodni tasdiqlash" })
+  @ApiOperation({ summary: "Verify-otp" })
   verifyOtp(@Body() dto: VerifyOtpDto) {
-    // dto ishlatildi
     return this.authService.verifyOtp(dto.email, dto.otp);
   }
 
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: "Tizimga kirish" })
+  @ApiOperation({ summary: "Sign in" })
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: express.Response
@@ -45,7 +45,10 @@ export class AuthController {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000
     });
-    return result.response;
+    return {
+      ...result.response,
+      token: result.token
+    }
   }
 
   @Post("logout")
@@ -54,6 +57,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(@Res({ passthrough: true }) res: express.Response) {
     res.clearCookie("auth_token");
-    return { success: true, message: "Muvaffaqiyatli tizimdan chiqildi" };
+    return { success: true, message: "Logout succesfully" };
   }
 }

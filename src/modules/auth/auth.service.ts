@@ -1,3 +1,4 @@
+//auth.service
 import {
   Injectable,
   BadRequestException,
@@ -10,7 +11,6 @@ import * as bcrypt from "bcrypt";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 
-// OTP kodlarni vaqtinchalik saqlash uchun (Redis o'rniga)
 const otpStore = new Map<string, { otp: number; data: any; expires: number }>();
 
 @Injectable()
@@ -25,7 +25,7 @@ export class AuthService {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email }
     });
-    if (existingUser) throw new BadRequestException("Bu email band");
+    if (existingUser) throw new BadRequestException("This email already exist");
 
     const otpCode = Math.floor(100000 + Math.random() * 900000);
 
@@ -44,7 +44,7 @@ export class AuthService {
 
     return {
       success: true,
-      message: "Kod emailga yuborildi",
+      message: "Otp emailga yuborildi",
       email: dto.email
     };
   }
@@ -54,7 +54,7 @@ export class AuthService {
 
     if (!record || record.expires < Date.now()) {
       otpStore.delete(email);
-      throw new BadRequestException("Kod muddati o'tgan yoki topilmadi");
+      throw new BadRequestException("Otp muddati o'tgan yoki topilmadi");
     }
 
     if (record.otp !== otp) {
@@ -72,7 +72,7 @@ export class AuthService {
       }
     });
 
-    otpStore.delete(email); // Ishlatib bo'lingach o'chiramiz
+    otpStore.delete(email); 
 
     return {
       success: true,
@@ -93,7 +93,7 @@ export class AuthService {
     });
 
     if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
-      throw new UnauthorizedException("Email yoki parol noto‘g‘ri");
+      throw new UnauthorizedException("Email yoki parol noto'g'ri");
     }
 
     const token = await this.jwtService.signAsync({

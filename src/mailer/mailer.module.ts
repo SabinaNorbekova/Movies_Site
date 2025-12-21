@@ -1,3 +1,4 @@
+//module/mailer.module
 import { MailerModule as NestMailerModule } from "@nestjs-modules/mailer";
 import { MailerService } from "./mailer.service";
 import { Global, Module } from "@nestjs/common";
