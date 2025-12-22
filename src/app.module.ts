@@ -8,7 +8,7 @@ import { SubscriptionsModule } from "./modules/subscriptions/subscription.module
 import { MailerModule } from './mailer/mailer.module';
 import { UsersModule } from './modules/users/users.module';
 import { FavouritesModule } from './modules/favourites/favourites.module'; 
-import { profilesModule } from './modules/profile/profile.module'; 
+import { ProfilesModule } from './modules/profile/profile.module'; 
 import { ReviewsModule } from './modules/reviews/reviews.module'; 
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
 
@@ -22,7 +22,7 @@ import { FileUploadModule } from './modules/file-upload/file-upload.module';
     MailerModule,
     UsersModule,
     FavouritesModule,
-    profilesModule,
+    ProfilesModule,
     ReviewsModule,
     FileUploadModule
   ],

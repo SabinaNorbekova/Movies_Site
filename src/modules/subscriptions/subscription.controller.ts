@@ -3,6 +3,7 @@ import { Controller, Get, Post, Body, UseGuards, Req } from "@nestjs/common";
 import { SubscriptionsService } from "./subscription.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { PurchaseSubscriptionDto } from "./dto/purchase-subscription.dto";
 
 @ApiTags("Subscriptions")
 @Controller("subscriptions")
@@ -18,8 +19,13 @@ export class SubscriptionsController {
   @Post("purchase")
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @ApiOperation({ summary: "Buy subscription" })
-  purchase(@Req() req: any, @Body() body: { planId: string }) {
-    return this.service.purchase(req.user.sub, body.planId);
+  @ApiOperation({ summary: "Obuna sotib olish" })
+  async purchase(@Req() req, @Body() dto: PurchaseSubscriptionDto) {
+    const result = await this.service.purchase(req.user.sub, dto.planId);
+    return {
+      success: true,
+      message: "Obuna muvaffaqiyatli sotib olindi",
+      data: result
+    };
   }
 }

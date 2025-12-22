@@ -1,3 +1,4 @@
+//favourites.controller
 import {
   Controller,
   Get,

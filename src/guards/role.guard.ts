@@ -1,19 +1,40 @@
-//role.guard
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { Observable } from "rxjs";
 
 @Injectable()
-export class RoleGuard implements CanActivate{
-    constructor(private reflector: Reflector) { }
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const ctx = context.switchToHttp()
-        const req = ctx.getRequest()
-        
-        const roles = this.reflector.get("roles", context.getHandler())
-        if (!roles.includes(req.user.role)) {
-            throw new ForbiddenException()
-        }
-        return true
+export class RoleGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const roles = this.reflector.getAllAndOverride<string[]>("roles", [
+      context.getHandler(),
+      context.getClass()
+    ]);
+
+    if (!roles) {
+      return true;
     }
+
+    const req = context.switchToHttp().getRequest();
+    const user = req.user;
+
+    if (!user || !user.role) {
+      throw new ForbiddenException("Foydalanuvchi roli aniqlanmadi");
+    }
+
+    const hasRole = roles.includes(user.role);
+
+    if (!hasRole) {
+      throw new ForbiddenException(
+        "Sizda ushbu amalni bajarish uchun ruxsat yo'q"
+      );
+    }
+
+    return true;
+  }
 }

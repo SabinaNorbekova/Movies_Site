@@ -1,7 +1,7 @@
+//file-upload.module
 import { BadRequestException, Module } from "@nestjs/common";
 import { MulterModule } from "@nestjs/platform-express";
-import { FileUploadController } from "./file-upload.controller";
-import { CloudinaryModule } from "nestjs-cloudinary"; 
+import { CloudinaryModule } from "nestjs-cloudinary";
 import * as multer from "multer";
 
 @Module({
@@ -25,7 +25,8 @@ import * as multer from "multer";
       }
     })
   ],
-  controllers: [FileUploadController],
-  exports: [CloudinaryModule]
+  controllers: [], 
+  providers: [],
+  exports: [CloudinaryModule] 
 })
 export class FileUploadModule {}

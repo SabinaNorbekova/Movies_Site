@@ -6,6 +6,7 @@ import { AuthGuard } from "../../guards/auth.guard";
 import { RoleGuard } from "../../guards/role.guard";
 import { UserRoles } from "../../decorators/role.decorator";
 import { Roles } from "../../decorators/role.enum";
+import { CreateCategoryDto } from "./dto/create-category.dto";
 
 @ApiTags("Catigories")
 @Controller("categories")
@@ -17,8 +18,8 @@ export class CategoriesController {
   @UserRoles(Roles.ADMIN, Roles.SUPERADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiOperation({ summary: "Create new category (Admin only)" })
-  create(@Body() body: { name: string; slug: string; description: string }) {
-    return this.categoriesService.create(body);
+  create(@Body() dto: CreateCategoryDto) {
+    return this.categoriesService.create(dto);
   }
 
   @Get()

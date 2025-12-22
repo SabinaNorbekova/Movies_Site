@@ -16,7 +16,7 @@ async function bootstrap() {
       forbidNonWhitelisted: false,
       transform: true
     })
-  );
+  );  
   const config = new DocumentBuilder()
     .setTitle("Movies Site Project")
     .setDescription("Welcome to the site to watch movies")

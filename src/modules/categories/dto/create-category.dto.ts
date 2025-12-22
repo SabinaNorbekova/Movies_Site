@@ -1,3 +1,4 @@
+//categories/dto/create-category.dto
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
 
