@@ -12,14 +12,14 @@ export class ProfilesController {
   constructor(private readonly service: ProfilesService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get profile informations" })
-  getProfile(@Req() req) {
+  @ApiOperation({ summary: "Profil ma’lumotlarini olish" })
+  async getProfile(@Req() req) {
     return this.service.getProfile(req.user.sub);
   }
 
   @Put()
-  @ApiOperation({ summary: "Update profile" })
-  update(@Req() req, @Body() dto: UpdateProfileDto) {
+  @ApiOperation({ summary: "Profilni yangilash" })
+  async update(@Req() req, @Body() dto: UpdateProfileDto) {
     return this.service.update(req.user.sub, dto);
   }
 }

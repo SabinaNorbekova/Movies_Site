@@ -7,4 +7,4 @@ import { ProfilesService } from "./profile.service";
     providers: [ProfilesService],
     exports:[ProfilesService]
 })
-export class profilesModule{}
+export class ProfilesModule{}
