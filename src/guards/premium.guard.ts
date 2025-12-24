@@ -1,9 +1,9 @@
-//premium.guard
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  ForbiddenException
+  ForbiddenException,
+  UnauthorizedException
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -13,22 +13,23 @@ export class PremiumGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user; // AuthGuard dan kelgan foydalanuvchi
+    const user = request.user;
     const movieSlug = request.params.slug;
+
+    if (!user) throw new UnauthorizedException("Tizimga kirmagansiz");
 
     const movie = await this.prisma.movie.findUnique({
       where: { slug: movieSlug }
     });
 
-    // Agar kino bepul bo'lsa, hamma ko'rishi mumkin
-    if (!movie || movie.subscriptionType === "free") return true;
+    if (!movie) return true; 
+    if (movie.subscriptionType === "free") return true;
 
-    // Agar premium bo'lsa, foydalanuvchining faol obunasi borligini tekshiramiz
     const activeSub = await this.prisma.userSubscription.findFirst({
       where: {
         userId: user.sub,
         status: "active",
-        endDate: { gte: new Date() } // Muddati tugamagan bo'lishi kerak
+        endDate: { gte: new Date() }
       }
     });
 

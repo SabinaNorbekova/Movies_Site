@@ -11,6 +11,7 @@ import { MoviesService } from "./movies.service";
 import { AuthGuard } from "../../guards/auth.guard";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { WatchHistoryDto } from "./dto/watch-history.dto";
+import { PremiumGuard } from "src/guards/premium.guard";
 
 @ApiTags("Movies")
 @Controller("movies")
@@ -24,7 +25,9 @@ export class MoviesController {
   }
 
   @Get(":slug")
-  @ApiOperation({ summary: "Kino haqida batafsil ma'lumot" })
+  @ApiBearerAuth() 
+  @UseGuards(AuthGuard, PremiumGuard) 
+  @ApiOperation({ summary: "Kino haqida batafsil ma’lumot" })
   findOne(@Param("slug") slug: string) {
     return this.moviesService.findBySlug(slug);
   }
@@ -36,7 +39,7 @@ export class MoviesController {
   async watchMovie(
     @Req() req: any,
     @Param("id") movieId: string,
-    @Body() body: WatchHistoryDto 
+    @Body() body: WatchHistoryDto
   ) {
     return this.moviesService.updateWatchHistory(req.user.sub, movieId, body);
   }
