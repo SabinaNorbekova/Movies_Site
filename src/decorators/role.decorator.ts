@@ -1,4 +1,3 @@
-//decorators/role.decorator
 import { Roles } from "./role.enum";
 import { SetMetadata } from "@nestjs/common";
 

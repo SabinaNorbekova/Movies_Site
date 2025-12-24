@@ -68,7 +68,15 @@ export class AuthService {
       data: {
         username: data.username,
         email: data.email,
-        passwordHash: hashedPassword
+        passwordHash: hashedPassword,
+        
+        profile: {
+          create: {
+            fullName: data.username, 
+            phone: "",
+            country: ""
+          }
+        }
       }
     });
 

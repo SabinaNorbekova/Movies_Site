@@ -46,11 +46,11 @@ export class MoviesService {
         title: movieData.title,
         description: movieData.description,
         subscriptionType: movieData.subscriptionType,
-    
+
         ...(categoryIds && {
           movieCategories: {
-            deleteMany: {}, 
-            create: categoryIds.map((catId: string) => ({ categoryId: catId })) 
+            deleteMany: {},
+            create: categoryIds.map((catId: string) => ({ categoryId: catId }))
           }
         })
       }
@@ -83,21 +83,34 @@ export class MoviesService {
 
   async updateWatchHistory(
     userId: string,
-    movieId: string,
+    movieIdentifier: string, // Bu ham ID, ham Slug bo'lishi mumkin
     body: { duration: number; percentage: number }
   ) {
+    // 1. Avval kinoni topamiz (ID yoki Slug orqali)
+    const movie = await this.prisma.movie.findFirst({
+      where: {
+        OR: [
+          { id: movieIdentifier.length === 36 ? movieIdentifier : undefined }, // UUID bo'lsa
+          { slug: movieIdentifier } // Slug bo'lsa
+        ]
+      }
+    });
+
+    if (!movie) throw new NotFoundException("Kino topilmadi");
+
+    // 2. Endi UUID (movie.id) bilan upsert qilamiz
     return this.prisma.watchHistory.upsert({
-      where: { userId_movieId: { userId, movieId } },
+      where: { userId_movieId: { userId, movieId: movie.id } },
       update: {
-        watchedDuration: body.duration,
-        watchedPercentage: body.percentage,
+        watchedDuration: Number(body.duration),
+        watchedPercentage: Number(body.percentage),
         lastWatched: new Date()
       },
       create: {
         userId,
-        movieId,
-        watchedDuration: body.duration,
-        watchedPercentage: body.percentage
+        movieId: movie.id,
+        watchedDuration: Number(body.duration),
+        watchedPercentage: Number(body.percentage)
       }
     });
   }
